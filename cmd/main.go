@@ -1,9 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"sync"
+
+	"github.com/tothbence9922/go-blockchain/internal/server"
+)
+
+var (
+	wg sync.WaitGroup
 )
 
 func main() {
-	fmt.Println("Hello, world!")
+
+	server := server.HttpServer{Port: 8080}
+
+	server.Serve(&wg)
+
+	wg.Wait()
 }

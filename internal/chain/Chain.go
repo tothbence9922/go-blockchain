@@ -9,6 +9,18 @@ type Chain struct {
 	Blocks []block.Block
 }
 
+var (
+	blockChain *Chain
+)
+
+func GetInstance() *Chain {
+	if blockChain == nil {
+		blockChain = New()
+	}
+
+	return blockChain
+}
+
 func New() *Chain {
 	blocks := make([]block.Block, 0)
 	blocks = append(blocks, block.Genesis())
