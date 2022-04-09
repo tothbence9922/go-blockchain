@@ -11,5 +11,5 @@ func (c Content) getValue() int {
 }
 
 func (c Content) String() string {
-	return fmt.Sprint("%d", c.Value)
+	return fmt.Sprintf("%d", c.Value)
 }
