@@ -6,6 +6,6 @@ import (
 )
 
 type IChain interface {
-	getBlocks() []block.Block
-	addBlock(content content.Content)
+	GetBlocks() []block.Block
+	AddBlock(content content.Content)
 }
