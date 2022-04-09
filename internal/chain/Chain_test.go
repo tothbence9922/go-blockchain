@@ -31,3 +31,37 @@ func TestAddBlock(t *testing.T) {
 		t.Errorf("AddBlock does not add the Content Value correctly.")
 	}
 }
+
+// It validates a valid chain
+func TestChainIsValid(t *testing.T) {
+	blockChain.AddBlock(content.Content{Value: 1})
+	valid := blockChain.IsValid()
+	if !valid {
+		t.Errorf("IsValid() invalidates a valid chain.")
+	}
+}
+
+// It invalidates a chain with an invalid genesis block
+func TestChainIsValidGenesis(t *testing.T) {
+	blockChain.Blocks[0].Content = content.Content{Value: -1}
+	valid := blockChain.IsValid()
+	if valid {
+		t.Errorf("IsValid() validates a genesis block with invalid content value.")
+	}
+}
+
+// It invalidates a chain with an invalid non-genesis block
+func TestChainIsValidNonGenesis(t *testing.T) {
+	blockChain.AddBlock(content.Content{Value: 22})
+	blockChain.Blocks[1].LastHash = "Invalid last hash"
+	valid := blockChain.IsValid()
+	if valid {
+		t.Errorf("IsValid() validates a non-genesis block with invalid last hash.")
+	}
+	blockChain.AddBlock(content.Content{Value: 22})
+	blockChain.Blocks[2].Hash = "Invalid hash"
+	valid = blockChain.IsValid()
+	if valid {
+		t.Errorf("IsValid() validates a non-genesis block with invalid hash.")
+	}
+}

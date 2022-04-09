@@ -57,3 +57,7 @@ func GenerateHash(timestamp int64, lastHash string, content content.Content) str
 	hash.Write([]byte(input))
 	return base64.URLEncoding.EncodeToString(hash.Sum(nil))
 }
+
+func GenerateHashForBlock(b Block) string {
+	return GenerateHash(b.Timestamp, b.LastHash, b.Content)
+}

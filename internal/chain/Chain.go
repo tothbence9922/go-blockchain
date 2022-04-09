@@ -24,3 +24,18 @@ func (c *Chain) AddBlock(content content.Content) {
 	newBlock := block.MineBlock(lastBlock, content)
 	c.Blocks = append(c.Blocks, newBlock)
 }
+
+func (c Chain) IsValid() bool {
+	if c.Blocks[0].String() != block.Genesis().String() {
+		return false
+	}
+
+	for i := 1; i < len(c.Blocks); i++ {
+		lastBlock := c.Blocks[i-1]
+		curBlock := c.Blocks[i]
+		if (curBlock.LastHash != lastBlock.Hash) || (curBlock.Hash != block.GenerateHashForBlock(curBlock)) {
+			return false
+		}
+	}
+	return true
+}
