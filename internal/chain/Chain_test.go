@@ -9,15 +9,17 @@ import (
 )
 
 var (
-	blockChain *chain.Chain
-	firstBlock block.Block
-	newBlock   block.Block
+	blockChain  *chain.Chain
+	blockChain2 *chain.Chain
+	firstBlock  block.Block
+	newBlock    block.Block
 )
 
 func init() {
 	firstBlock = block.Genesis()
 	newBlock = block.MineBlock(firstBlock, content.Content{Value: 22})
 	blockChain = chain.New()
+	blockChain2 = chain.New()
 }
 
 func TestNewChain(t *testing.T) {
@@ -63,5 +65,27 @@ func TestChainIsValidNonGenesis(t *testing.T) {
 	valid = blockChain.IsValid()
 	if valid {
 		t.Errorf("IsValid() validates a non-genesis block with invalid hash.")
+	}
+}
+func TestReplaceValidChain(t *testing.T) {
+	originalLength := len(blockChain.Blocks)
+	blockChain2.AddBlock(content.Content{Value: 22})
+
+	blockChain.ReplaceChain(blockChain2)
+	newLength := len(blockChain.Blocks)
+
+	if originalLength >= newLength {
+		t.Errorf("ReplaceChain() does not replace a valid longer chain.")
+	}
+}
+
+func TestReplaceShortChain(t *testing.T) {
+	blockChain.AddBlock(content.Content{Value: 11})
+	blockChain2.AddBlock(content.Content{Value: 22})
+
+	blockChain.ReplaceChain(blockChain2)
+
+	if blockChain.Blocks[1].Content.Value == blockChain2.Blocks[1].Content.Value {
+		t.Errorf("ReplaceChain() replaced a chain with a chain that is the same length.")
 	}
 }
