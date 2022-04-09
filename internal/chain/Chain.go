@@ -39,3 +39,9 @@ func (c Chain) IsValid() bool {
 	}
 	return true
 }
+
+func (c *Chain) ReplaceChain(newChain Chain) {
+	if (len(newChain.Blocks) > len(c.Blocks)) && (newChain.IsValid()) {
+		c.Blocks = newChain.Blocks
+	}
+}

@@ -8,4 +8,5 @@ import (
 type IChain interface {
 	GetBlocks() []block.Block
 	AddBlock(content content.Content)
+	IsValid() bool
 }
