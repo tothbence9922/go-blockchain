@@ -5,15 +5,39 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/tothbence9922/go-blockchain/internal/chain"
 	"github.com/tothbence9922/go-blockchain/internal/content"
+	p2pServer "github.com/tothbence9922/go-blockchain/internal/server/p2p"
 )
 
 type HttpServer struct {
 	Port int
+}
+
+var (
+	httpServer *HttpServer
+)
+
+func New() *HttpServer {
+	envPort := os.Getenv("HTTP_PORT")
+	port, err := strconv.Atoi(envPort)
+	if err != nil {
+		fmt.Println("Error converting environment HTTP_PORT string to int")
+		port = 8080
+	}
+	return &HttpServer{Port: port}
+}
+
+func GetInstance() *HttpServer {
+	if httpServer == nil {
+		httpServer = New()
+	}
+	return httpServer
 }
 
 func handleGetBlocks(w http.ResponseWriter, req *http.Request) {
@@ -36,8 +60,9 @@ func handlePostBlock(w http.ResponseWriter, req *http.Request) {
 	json.Unmarshal(reqBody, &newContent)
 
 	blockChain := chain.GetInstance()
-	fmt.Println(newContent.Value)
 	blockChain.AddBlock(newContent)
+
+	p2pServer.GetInstance().SyncChains()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
